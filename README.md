@@ -226,3 +226,4 @@ Private project - All rights reserved
 - All components are responsive and mobile-optimized
 - The backend uses SQLite for simplicity (can be easily switched to PostgreSQL)
 - Admin authentication uses JWT tokens stored in localStorage
+# WDJ
