@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Use "postgresql" for production (Render), "sqlite" for local development
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+
+  @@map("users")
+}
+
+model Reservation {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?  // Optional: for sending confirmation email
+  phone     String
+  date      String
+  time      String
+  guests    Int
+  status    String   @default("pending") // pending, confirmed, cancelled, completed
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@map("reservations")
+}
+
+model MenuItem {
+  id            String   @id @default(uuid())
+  name_de       String
+  name_en       String
+  name_cn       String
+  description_de String
+  description_en String
+  description_cn String
+  price         Float
+  element       String   // metal, wood, water, fire, earth
+  category      String   // protein, vegetable, starch, soup
+  image         String?
+  story_de      String?
+  story_en      String?
+  story_cn      String?
+  available     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  @@map("menu_items")
+}
+
+model DiscountCode {
+  id             String   @id @default(uuid())
+  code           String   @unique
+  discountPercent Int
+  dishId         String?  // Optional: specific dish discount
+  validFrom      DateTime
+  validUntil     DateTime
+  usedCount      Int      @default(0)
+  maxUses        Int?     // null = unlimited
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  @@map("discount_codes")
+}
+
+model BlogPost {
+  id         String   @id @default(uuid())
+  title_de   String
+  title_en   String
+  title_cn   String
+  content_de String
+  content_en String
+  content_cn String
+  dishId     String?  // Optional: link to menu item
+  image      String?
+  published  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("blog_posts")
+}
