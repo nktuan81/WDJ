@@ -53,6 +53,7 @@ const VirtualTable: React.FC = () => {
   const [selectedDishes, setSelectedDishes] = useState<DishItem[]>([]);
   const [rotation, setRotation] = useState(0);
   const [guests, setGuests] = useState(2);
+  const [guestsInput, setGuestsInput] = useState('2');
   const [tableNumber, setTableNumber] = useState('');
   const [discountCode, setDiscountCode] = useState('');
   const [discountPercent, setDiscountPercent] = useState(0);
@@ -65,7 +66,9 @@ const VirtualTable: React.FC = () => {
       try {
         const data = JSON.parse(saved);
         setSelectedDishes(data.dishes || []);
-        setGuests(data.guests || 2);
+        const savedGuests = data.guests || 2;
+        setGuests(savedGuests);
+        setGuestsInput(String(savedGuests));
       } catch (e) {
         // Ignore parse errors
       }
@@ -220,9 +223,29 @@ const VirtualTable: React.FC = () => {
                 type="number"
                 min="1"
                 max="20"
-                value={guests}
-                onChange={(e) => setGuests(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
-                className="w-full bg-charcoal-dark border border-champagne/20 rounded-lg py-2 px-4 text-champagne-light focus:outline-none focus:border-champagne/50 transition-colors"
+                value={guestsInput}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  setGuestsInput(raw);
+                  const num = parseInt(raw, 10);
+                  if (!isNaN(num) && num >= 1 && num <= 20) {
+                    setGuests(num);
+                  }
+                }}
+                onBlur={() => {
+                  const num = parseInt(guestsInput, 10);
+                  if (isNaN(num) || num < 1) {
+                    setGuests(1);
+                    setGuestsInput('1');
+                  } else if (num > 20) {
+                    setGuests(20);
+                    setGuestsInput('20');
+                  } else {
+                    setGuests(num);
+                    setGuestsInput(String(num));
+                  }
+                }}
+                className="w-full bg-charcoal-dark border border-champagne/20 rounded-lg py-2 px-4 text-champagne-light focus:outline-none focus:border-champagne/50 transition-colors min-h-[44px]"
               />
               <p className="text-champagne/50 text-xs mt-2">
                 {language === 'de' 
